@@ -67,9 +67,9 @@ void TrojanMap::PrintMenu() {
     menu = "Please input a partial location:";
     std::cout << menu;
     getline(std::cin, input);
-    auto start = std::chrono::high_resolution_clock::now();
-    auto results = Autocomplete(input);
-    auto stop = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();  //count the time: start
+    auto results = Autocomplete(input);  // somethng we need to write
+    auto stop = std::chrono::high_resolution_clock::now(); //count the time: stop
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     menu = "*************************Results******************************\n";
     std::cout << menu;
@@ -587,7 +587,13 @@ std::pair<double, double> TrojanMap::GetPlotLocation(double lat, double lon) {
  * @return {double}         : latitude
  */
 double TrojanMap::GetLat(std::string id) {
-    return 0;
+    double ans_lat = -1; // initial ans_lat with -1 if return ans_lat = -1 then the id doesn't exist
+
+    auto it =data.find(id);
+    if(it != data.end()){
+      ans_lat = it->second.lat;
+    }
+    return ans_lat;
 }
 
 
@@ -598,7 +604,13 @@ double TrojanMap::GetLat(std::string id) {
  * @return {double}         : longitude
  */
 double TrojanMap::GetLon(std::string id) { 
-    return 0;
+    double ans_lon = -1; // -1 means id not exists
+    auto it = data.find(id);
+    if(it != data.end()){
+      ans_lon = it->second.lon;
+    }
+
+    return ans_lon;
 }
 
 /**
@@ -608,7 +620,12 @@ double TrojanMap::GetLon(std::string id) {
  * @return {std::string}    : name
  */
 std::string TrojanMap::GetName(std::string id) { 
-    return "";
+    std::string ans_name = ""; // "" means id not exists
+    auto it  = data.find(id);
+    if(it != data.end()){
+      ans_name = it->second.name;
+    }
+    return ans_name;
 }
 
 /**
@@ -618,7 +635,12 @@ std::string TrojanMap::GetName(std::string id) {
  * @return {std::vector<std::string>}  : neighbor ids
  */
 std::vector<std::string> TrojanMap::GetNeighborIDs(std::string id) {
-    return {};
+    std::vector<std::string> ans_neighbors;
+    auto it = data.find(id);
+    if(it != data.end()){
+      ans_neighbors = it->second.neighbors;
+    }
+    return ans_neighbors;
 }
 
 /**
@@ -672,6 +694,18 @@ double TrojanMap::CalculatePathLength(const std::vector<std::string> &path) {
  */
 std::vector<std::string> TrojanMap::Autocomplete(std::string name){
   std::vector<std::string> results;
+
+  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+  
+  for(auto it = data.begin(); it != data.end(); it++){
+    std::string temp = it->second.name.substr(0, name.length());
+    std::transform(temp.begin(), temp.end(), temp.begin(),  ::tolower);
+    if(name == temp){
+      results.push_back(it->second.name);
+    } 
+
+  }
+  
   return results;
 }
 
@@ -682,7 +716,19 @@ std::vector<std::string> TrojanMap::Autocomplete(std::string name){
  * @return {std::pair<double,double>}  : (lat, lon)
  */
 std::pair<double, double> TrojanMap::GetPosition(std::string name) {
-  std::pair<double, double> results(-1, -1);
+  std::pair<double, double> results(-1, -1);    //if the name is not in the map, then we return -1 -1 to present error
+  double lat_temp = -1;
+  double lon_temp = -1;
+  for(auto it = data.begin(); it != data.end(); it++){
+    if(it->second.name == name){
+      lat_temp = it->second.lat;
+      lon_temp = it->second.lon;
+      PlotPoint(lat_temp, lon_temp);
+    }
+  }
+  std::cout<<lat_temp<<lon_temp<<std::endl;
+  results.first = lat_temp;
+  results.second = lon_temp;
   return results;
 }
 
@@ -695,8 +741,72 @@ std::pair<double, double> TrojanMap::GetPosition(std::string name) {
  */
 std::string TrojanMap::GetID(std::string name) {
   std::string res = "";
+  for(auto it = data.begin(); it != data.end(); it++){
+    if(name == it->second.name){
+      res = it->first;
+    }
+  }
   return res;
 }
+
+// Djikstra helper function I: FindMinInDButNotVisited   goal is as the function name
+std::string TrojanMap::FindMinInDBUtNotInVisited(std::unordered_map<std::string, double> &d, std::vector<std::string> &visited){
+  std::string min_id;
+  double minValue;
+  std::unordered_map<std::string, double> temp(d);
+  double Inf = __INT_MAX__;
+  //go through visited, for each iter, find the id corresponding to the temp ,cahnge it value to Inf, then find the min value in temp
+  for(int i = 0; i < visited.size(); i++){
+    std::string temp_id = visited[i];
+    auto it_find = temp.find(temp_id);
+    if(it_find != temp.end()) it_find->second = Inf;
+
+  }
+
+  //find the min id, go through the temp, strore the min value and it's id;
+  auto it_d = temp.begin();
+  min_id = it_d->first;
+  minValue = it_d->second;
+  for(; it_d != temp.end(); it_d++){
+
+    if(it_d->second < minValue){
+      minValue = it_d->second;
+      min_id = it_d->first;
+    }
+
+  }
+
+  return min_id;
+}
+
+// Djikstra helper function II: Weight goal is to find the distance between input 2 id
+double TrojanMap::Weight(std::string min_id, std::string temp_id){
+  double weight;
+  double Inf = __INT_MAX__;
+  std::vector<std::string> min_id_neighbors = data[min_id].neighbors; // create the neighbors
+  //std::cout<<"current neighbors are:"<<std::endl;
+  // for(auto itn = min_id_neighbors.begin(); itn != min_id_neighbors.end(); itn++){
+  //   std::cout<<*itn<<std::endl;
+  // }
+
+  // if(min_id == temp_id) weight = 0;
+  // else{
+
+    auto it = find(min_id_neighbors.begin(), min_id_neighbors.end(),  temp_id);
+
+    if(it == min_id_neighbors.end()){
+      weight = Inf; //current id not in the neighbors of min id, which means they are not connected
+    }
+    else{
+      weight = CalculateDistance(min_id, temp_id);
+      //std::cout<<"current id is "<<*it<<std::endl;
+      //std::cout<<"now the weight is:"<<weight<<std::endl;
+    }
+  //}
+
+  return weight;
+}
+
 
 /**
  * CalculateShortestPath_Dijkstra: Given 2 locations, return the shortest path which is a
@@ -706,9 +816,83 @@ std::string TrojanMap::GetID(std::string name) {
  * @param  {std::string} location2_name     : goal
  * @return {std::vector<std::string>}       : path
  */
+
+//   CalculateDistance(const std::string &a_id, const std::string &b_id)
 std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
     std::string location1_name, std::string location2_name) {
+
+  //  i need to change the d's data type should use map
+  // then d[id][weight] it will cost less trouble
   std::vector<std::string> path;
+  std::vector<std::string> visited;
+  std::unordered_map<std::string, double> d(data.size());
+  double Inf = __INT_MAX__; //max value denote infinite
+  std::string start_id = GetID(location1_name);
+  std::string end_id = GetID(location2_name);
+  std::vector<std::string> path_last_neighbors;
+  std::unordered_map<std::string, std::string> pr;   //pr id and it's precessor's id
+  std::string unknown = "-1"; // for those id not itered
+
+
+  // ---------start algorithm---------//
+
+  path_last_neighbors = data[start_id].neighbors;
+
+  for(auto it = data.begin(); it != data.end(); it++){
+    d[it->first] = Weight(start_id, it->first);
+    auto it_find_neighbor = find(path_last_neighbors.begin(), path_last_neighbors.end(), it->first);
+    if(it_find_neighbor != path_last_neighbors.end()){
+      //current id is in the start_id neighbor
+      pr[it->first] = start_id;
+      std::cout<<pr[it->first]<<std::endl;
+    }
+    else{
+      pr[it->first] = unknown;
+      //std::cout<<pr[it->first]<<std::endl;
+    }
+
+    
+    //if(Weight(start_id, it->first) != Inf) std::cout<<d[it->first]<<std::endl;
+
+  }// Initialized Weight Matrix & pr
+
+  std::cout<<"---------------"<<std::endl;
+
+  visited.push_back(start_id); // add the start id
+  path.push_back(start_id); // add the start id to the path
+  
+  //int count = 0;
+  while(visited.size() < data.size()){
+    //count += 1;
+
+    //get the min id in the d without visited       <string>
+
+    std::string min_id = FindMinInDBUtNotInVisited(d, visited);
+    std::cout<<min_id<<std::endl;
+    // now i need to write std::string FindMinInDBUtNotInVisited(d, visited)
+
+    visited.push_back(min_id);
+    if(min_id == GetID(location2_name)) 
+
+    //std::cout<<min_id<<std::endl;
+    if(min_id == GetID(location2_name)){
+      std::cout<<"finally we are here!!!!"<<std::endl;
+      break;
+    }
+
+    //update distance or min_id's neighbor
+    for(auto it = data.begin(); it != data.end(); it++){
+
+      d[it->first] = std::min(d[it->first], d[min_id] + Weight(min_id, it->first));
+      
+      //now i need to write Weight function double Weight(min_id, temp_id)
+
+    }
+
+  }  //end of the djikstra, then we can get the d
+  std::cout<<d[GetID(location2_name)]<<std::endl;
+
+
   return path;
 }
 

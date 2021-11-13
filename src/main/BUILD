@@ -4,6 +4,5 @@ cc_binary(
     name = "main",
     srcs = ["main.cc"],
     deps = ["//src/lib:TrojanMap",
-            "@ncurses//:main",
 	     	"@opencv//:opencv",],
 )

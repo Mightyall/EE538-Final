@@ -72,7 +72,7 @@ Next, type the following, but make sure that you set the **path_to_install_folde
 $ cd opencv/
 $ mkdir build install
 $ cd build
-$ cmake -D CMAKE_INSTALL_PREFIX=**path_to_install_folder**\
+$ cmake -D CMAKE_INSTALL_PREFIX=/Users/kk9912/Desktop/github/EE538FINAL/final-project-Mightyall/opencv/install\
  -D BUILD_LIST=core,highgui,imgcodecs,imgproc,videoio\
  -D WITH_TBB=ON -D WITH_OPENMP=ON -D WITH_IPP=ON\
  -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF\

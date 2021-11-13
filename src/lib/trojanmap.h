@@ -135,6 +135,11 @@ class TrojanMap {
   std::vector<std::string> FindKClosestPoints(std::string name, int k);
   
   //----------------------------------------------------- User-defined functions
+  // for djikstra
+  std::string FindMinInDBUtNotInVisited(std::unordered_map<std::string, double> &d, std::vector<std::string> &visited);
+
+  double Weight(std::string min_id, std::string temp_id);
+
 };
 
 #endif
