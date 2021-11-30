@@ -138,7 +138,28 @@ class TrojanMap {
   // for djikstra
   std::string FindMinInDBUtNotInVisited(std::unordered_map<std::string, double> &d, std::vector<std::string> &visited);
 
-  double Weight(std::string min_id, std::string temp_id);
+  double Weight(std::string loc1, std::string loc2);
+
+  //for tsp_backtracking
+
+  void TSP_aux(
+  std::string start, std::vector<std::string> &location_ids, std::string cur_node, double cur_cost, std::vector<std::string> &cur_path, std::pair<double, std::vector<std::vector<std::string>>> &results
+);
+
+// for circleDetection DFShelper
+  bool DFS_helper(std::string rootID, std::map<std::string, int> &marks,std::string parent);
+
+// for find K points
+  void GetAllName(std::vector< std::pair<std::string, std::string> > &nameAndId);
+
+
+// 3opt
+std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_3opt(
+      std::vector<std::string> &location_ids);
+
+double reverse_segment_if_better(std::vector<std::string> &path, int i, int j, int k);
+
+
 
 };
 
