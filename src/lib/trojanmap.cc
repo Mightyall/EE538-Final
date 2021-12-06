@@ -129,10 +129,10 @@ void TrojanMap::PrintMenu() {
     std::string input2;
     getline(std::cin, input2);
     auto start = std::chrono::high_resolution_clock::now();
-    auto results = CalculateShortestPath_Dijkstra(input1, input2);
+    //auto results = CalculateShortestPath_Dijkstra(input1, input2);
 
 
-    //auto results = CalculateShortestPath_Bellman_Ford(input1, input2);
+    auto results = CalculateShortestPath_Bellman_Ford(input1, input2);
 
 
     auto stop = std::chrono::high_resolution_clock::now();
@@ -179,12 +179,14 @@ void TrojanMap::PrintMenu() {
     auto start = std::chrono::high_resolution_clock::now();
 
 
-    // auto results = TravellingTrojan(locations);
+    //auto results = TravellingTrojan(locations);
 
 
     //auto results = TravellingTrojan_2opt(locations);
 
-    auto results = TravellingTrojan_3opt(locations);
+    //auto results = TravellingTrojan_3opt(locations);
+
+    auto results = TravellingTrojan_GA(locations);
 
 
     auto stop = std::chrono::high_resolution_clock::now();
@@ -271,14 +273,20 @@ void TrojanMap::PrintMenu() {
     // Read location names from CSV file
     std::vector<std::string> location_names;
     if (locations_filename == "")
-      location_names = {"Cardinal Gardens", "Coffee Bean1","CVS"};
+      //location_names = {"Cardinal Gardens", "Coffee Bean1","CVS"};
+      //location_names = {"1", "2", "3", "4", "5"};
+      location_names = {"1", "2", "3"};
     else
       location_names = ReadLocationsFromCSVFile(locations_filename);
 
     // Read dependencies from CSV file
     std::vector<std::vector<std::string>> dependencies;
     if (dependencies_filename == "")
-      dependencies = {{"Coffee Bean1","Cardinal Gardens"}, {"CVS","Cardinal Gardens"}, {"CVS","Coffee Bean1"}};
+      //dependencies = {{"Coffee Bean1","Cardinal Gardens"}, {"CVS","Cardinal Gardens"}, {"CVS","Coffee Bean1"}};
+      dependencies = {{"1", "2"}, {"2", "3"}, {"3", "1"}};
+
+      //dependencies = {{"1", "3"}, {"2", "4"}, {"1", "4"},{"2", "5"}};
+
     else
       dependencies = ReadDependenciesFromCSVFile(dependencies_filename);
 
@@ -720,6 +728,10 @@ std::vector<std::string> TrojanMap::Autocomplete(std::string name){
 
   }
 
+  if(results.size() == 0){
+    return {""};
+  }
+
   return results;
 }
 
@@ -1020,14 +1032,7 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
   results.first = __INT_MAX__;
   TSP_aux(start, location_ids, start, 0, cur_path, results);
   std::cout<<"the shortest path is"<<results.first<<"  and the size the min_path is: "<<results.second.size()<<std::endl;
-  // for(auto i = results.second.begin(); i != results.second.end(); i++){
-  //   for(auto j = i->begin(); j != i->end(); j++){
-  //     std::cout<<*j<<"-->"<<std::endl;
-  //   }
-  //   //std::cout<<*i<<std::endl;
-  //   std::cout<<"----------"<<std::endl;
-  // }
-
+  
   return results;
 }
 
@@ -1037,11 +1042,6 @@ void TrojanMap::TSP_aux(
     if(cur_path.size() == location_ids.size()){
       // now we are in the leaf, check!
       cur_path.push_back(start);
-
-      // for(auto it = cur_path.begin(); it != cur_path.end(); it++){
-      //   std::cout<<*it<<std::endl;
-      // }
-      // std::cout<<"----....-----.....----"<<std::endl;
 
       double final_cost = cur_cost + CalculateDistance(start, cur_node);
 
@@ -1075,61 +1075,6 @@ void TrojanMap::TSP_aux(
 
       }
     }
-}
-
-
-
-std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_2opt(
-      std::vector<std::string> &location_ids){
-  std::pair<double, std::vector<std::vector<std::string>>> results;
-
-  // step 1: random choose a path  <we can use the location_ids as a path since each id connected>
-  // step 2: random choose 2 points in it, reverse the path between it
-  // step 3: caculate new distance, if it's less than previous one, then we change min path;
-  // and reset the count, count += 1; go back to step 2, if counts finally reach to maxCount;
-  // we assume this as the min path
-  // we gonna use double TrojanMap::CalculatePathLength(const std::vector<std::string> &path) to caculate path_len
-
-  int maxCount = 100;
-  int count = 0;
-  std::vector<std::string> minPath = location_ids;
-  double minValue = CalculatePathLength(minPath) + CalculateDistance(location_ids[0], location_ids[location_ids.size() - 1]);
-  std::vector<std::string> tempPath = minPath;
-  minPath.push_back(minPath[0]);
-  int range = location_ids.size() - 1;
-  results.second.push_back(minPath);
-  results.first = minValue;
-  minPath.pop_back();
-
-  while(count != maxCount){
-    // random generate 2 index between path len
-    int index1 = rand()%range;
-    int index2 = rand()%range;
-
-    // reverse the path
-    std::reverse(tempPath.begin() + index1, tempPath.begin() + index2);
-
-
-    //calculate new len
-    double tempValue = CalculatePathLength(tempPath) + CalculateDistance(tempPath[0], tempPath[tempPath.size() - 1]);
-
-    if(tempValue < minValue){
-      tempPath.push_back(tempPath[0]);
-      count = 0;
-      minValue = tempValue;
-      minPath = tempPath;
-      results.second.push_back(tempPath);
-      results.first = minValue;
-      tempPath.pop_back();
-    }
-
-    else{
-      // minPath remains the same
-      count += 1;
-    }
-  }
-
-  return results;
 }
 
 
@@ -1280,6 +1225,10 @@ std::vector<std::string> TrojanMap::DeliveringTrojan(std::vector<std::string> &l
     }
   }
 
+  for(auto i : indegree){
+    std::cout<<i.first<<"   "<<i.second<<std::endl;
+  }
+
   int count = 0;
 
   while(result.size() < locations.size()){
@@ -1287,13 +1236,32 @@ std::vector<std::string> TrojanMap::DeliveringTrojan(std::vector<std::string> &l
     std::cout<<"current count "<<count<<std::endl;
 
     for(auto it : indegree){
-      if(it.second == count){
+      if(it.second == 0 and std::find(result.begin(), result.end(), it.first) == result.end()){
         std::cout<<"current "<<it.first<<"  with indegree "<<count<<"  it pushed in"<<std::endl;
         result.push_back(it.first);
+
+        //make the current id's neighbor indegree - 1;
+        for(auto i : dependencies){
+          if(i[0] == it.first){
+
+            for(int j = 1; j < i.size(); j++){
+              indegree[i[j]] -= 1;
+            }
+
+          }
+        }
+
+
       }
     }
 
     count += 1;
+
+    if(count > 10*locations.size()){
+      std::cout<<"There is no feasible answer"<<std::endl;
+      std::vector<std::string> empty = {""};
+      return empty;
+    }
 
   }
 
@@ -1316,6 +1284,7 @@ bool TrojanMap::CycleDetection(std::vector<double> &square) {
   // in this question, we may need to use void TrojanMap::PlotPointsandEdges(std::vector<std::string> &location_ids, std::vector<double> &square)
   //bool result = false;
   std::vector<std::string> location_ids;
+  std::vector<std::string> res;
   //lat, lon is  34.0112 -118.283
   std::cout<<square[0]<<square[1]<<square[2]<<square[3]<<std::endl;
   std::map<std::string, int> marks;
@@ -1354,24 +1323,16 @@ bool TrojanMap::CycleDetection(std::vector<double> &square) {
     }
   }
 
-  // PlotPointsandEdges(location_ids, square);
-
-
-  // now we have all the ids in the given area
-  // run dfs for every ids in location_id ?????
 
   for(int i = 0; i <location_ids.size(); i++){
     //each node in location_id
-    //std::cout<<"current id is : "<<location_ids[i]<<std::endl;
 
     if(marks[location_ids[i]] != 1){
 
-      //std::cout<<"****current id "<<location_ids[i]<<"has not been visited"<<std::endl;
-
       //current id is not visited
 
-      if(DFS_helper(location_ids[i], marks, parent) == true){
-        PlotPointsandEdges(location_ids, square);
+      if(DFS_helper(location_ids[i], marks, parent, res) == true){
+        PlotPointsandEdges(res, square);
         return true;
       }
     }
@@ -1392,17 +1353,18 @@ bool TrojanMap::CycleDetection(std::vector<double> &square) {
 //Please input the upper bound latitude(between 34.011 and 34.032):34.02235
 //Please input the lower bound latitude(between 34.011 and 34.032):34.019675
 
-bool TrojanMap::DFS_helper(std::string rootID, std::map<std::string, int> &marks, std::string parent){
+bool TrojanMap::DFS_helper(std::string rootID, std::map<std::string, int> &marks, std::string parent, std::vector<std::string> &res){
 
   // mark the current result as visited
   std::cout<<"currently visiting :  "<<rootID<<std::endl;
   marks[rootID] = 1;
+  res.push_back(rootID);
   std::vector<std::string> tempNeighbors = GetNeighborIDs(rootID);
   for(auto child : tempNeighbors){
     //std::cout<<"current child is  "<<child<<"  with  parent  "<<rootID<<std::endl;
 
     if(marks[child] == 0){
-      if(DFS_helper(child, marks, rootID) == true){
+      if(DFS_helper(child, marks, rootID, res) == true){
         return true;
       }
     }
@@ -1524,7 +1486,7 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
   while(true){
     double delta = 0;
     for(auto it: combinations){
-      delta += reverse_segment_if_better(path1, it[0], it[1], it[2]);
+      delta += reverse_segment_if_better(path2, it[0], it[1], it[2], results);
     }
 
     if(delta >= 0){
@@ -1536,7 +1498,7 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
          
 }
 
-double TrojanMap::reverse_segment_if_better(std::vector<std::string> &path, int i, int j, int k){
+double TrojanMap::reverse_segment_if_better(std::vector<std::string> &path, int i, int j, int k, std::pair<double, std::vector<std::vector<std::string>>> &results){
 
   std::string a = path[i - 1];
   std::string b = path[i];
@@ -1555,22 +1517,106 @@ double TrojanMap::reverse_segment_if_better(std::vector<std::string> &path, int 
 
   if(d0 > d1){
     std::reverse(path.begin() + i, path.begin() + j);
+    results.second.push_back(path);
     return d1 - d0;
   }
 
   else if(d0 > d2){
     std::reverse(path.begin() + j, path.begin() + k);
+    results.second.push_back(path);
     return d2 - d0;
   }
 
   else if(d0 > d4){
     std::reverse(path.begin() + i, path.begin() + k);
+    results.second.push_back(path);
     return d4 - d0;
   }
 
   else if(d0 > d3){
-    std::reverse(path.begin() + j, path.begin() + k);
-    return d2 - d0;
+    int count = 0;
+    std::vector<std::string> path1(path.begin() + j, path.begin() + k);
+    std::vector<std::string> path2(path.begin() + i, path.begin() + j);
+    path1.insert(path1.end(), path2.begin(), path2.end());
+
+    for(auto it : path1){
+      path[i + count] = it;
+    }
+    results.second.push_back(path);
+    
+    return d3 - d0;
+  }
+
+
+  return 0;
+}
+
+
+
+
+std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_2opt(
+      std::vector<std::string> &location_ids){
+
+  std::pair<double, std::vector<std::vector<std::string>>> results;
+  std::vector< std::vector<int> > combinations;
+
+  std::vector<std::string> path1(location_ids);
+  std::vector<std::string> path2(location_ids);
+  path2.push_back(location_ids[0]);
+
+
+
+  // generate all comnbinations of segements
+  for(int i = 1; i < location_ids.size(); i ++){
+
+      for(int k = i + 1; k < location_ids.size() + 1; k++){
+        std::vector<int> temp;
+        temp.push_back(i);
+
+        temp.push_back(k);
+        //std::cout<<i<<j<<k<<std::endl;
+        combinations.push_back(temp);
+      }
+
+  }
+
+  while(true){
+    double delta = 0;
+    for(auto it: combinations){
+      delta += reverse_segment_if_better2opt(path2, it[0], it[1], results);
+    }
+
+    if(delta >= 0){
+      break;
+    }
+  }
+
+  results.first = CalculatePathLength(results.second[results.second.size() - 1]);
+
+
+  return results;
+}
+
+
+double TrojanMap::reverse_segment_if_better2opt(std::vector<std::string> &path, int i, int k, std::pair<double, std::vector<std::vector<std::string>>> &results){
+
+  std::string a = path[i - 1];
+  std::string b = path[i];
+
+
+  std::string e = path[k - 1];
+  std::string f = path[k % path.size()];
+
+  double d0 = CalculateDistance(a,b) + CalculateDistance(e,f);
+  double d1 = CalculateDistance(a,e) + CalculateDistance(b,f);
+  
+
+
+  if(d0 > d1){
+    std::reverse(path.begin() + i, path.begin() + k);
+    results.second.push_back(path);
+    //results.first = CalculatePathLength(path);
+    return d1 - d0;
   }
 
 
@@ -1585,100 +1631,243 @@ double TrojanMap::reverse_segment_if_better(std::vector<std::string> &path, int 
 
 
 
-// std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_3opt(
-//       std::vector<std::string> &location_ids){
 
-//   std::pair<double, std::vector<std::vector<std::string>>> results;
 
-//   // first path is followed as location id;
 
-//   int count = 0;
-//   int countMax = location_ids.size()*100;
 
-//   std::vector<std::string> path = location_ids;
-//   std::vector<std::string> tempPath = location_ids;
-//   path.push_back(location_ids[0]);
-//   results.second.push_back(path);
 
-//   double minValue = CalculatePathLength(path);
 
-//   while(count < countMax){
-//     std::vector<int> que;
-//     // random generage a new path 
-//     for(int i = 0; i < 2; i ++){
-//       int index1 = rand()%(location_ids.size());
-//       que.push_back(index1);
+// GA
 
-//     }
+std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_GA(
+       std::vector<std::string> &location_ids){
+  std::pair<double, std::vector<std::vector<std::string>>> results;
+  std::vector<std::vector<std::string>> BestPathEachGeneration;
 
-//     std::sort(que.begin(), que.end());
+  int maxGeneration = 1000;
+  int inn = 50; //size of the population;
+  int currentGenerationCounter = 0;
 
-//     // for(auto it : que){
-//     //   std::cout<<it<<std::endl;
-//     //   }
+  double pc = 0.8; // crossover proportion
+  double pm = 0.2; // mutation proportion
+  //double pn = 0.1; // without changing proportion
+
+  int pcIndex = inn * pc;
+  int pmIndex = inn * pm;
+
+
+
+  // first generate some random paths
+  std::vector<std::vector<std::string>> generation = CreateRandomPath(location_ids, inn);
+
+
+  std::vector<double> PathFitness = CalculateGenerationFitness(generation);
+  auto biggest = std::max_element(PathFitness.begin(), PathFitness.end());
+  int index_big = std::distance(PathFitness.begin(), biggest);
+  std::cout<<"current best fitness is :  "<<PathFitness[index_big]<<std::endl;
+  std::vector<std::string> tempLoop = generation[index_big];
+  tempLoop.push_back(tempLoop[0]);
+  BestPathEachGeneration.push_back(tempLoop); 
+  results.first = PathFitness[index_big];
+
+
+  // ---------------------------------- //
+  // ---------start Algorithm---------- //
+  // ---------------------------------- //
+  
+  while(currentGenerationCounter < maxGeneration){
+
+    //push the best into res
+
+    std::vector<std::vector<std::string>> NewGeneration;
+    NewGeneration.push_back(generation[index_big]);
+
+    //create new generations
+    //std::vector<std::vector<std::string>> NewGeneration;
+    for(int i = 0; i < generation.size() - 1; i++){
+
+      Evolution(generation[i], generation, pc);
+      NewGeneration.push_back(generation[i]);
+
+    }
+    std::cout<<"eve over this ge"<<std::endl;
+
+
+    currentGenerationCounter += 1;
+    std::cout<<currentGenerationCounter<<"     current generation"<<std::endl;
+    generation = NewGeneration;
+
+    PathFitness = CalculateGenerationFitness(generation);
+    auto biggest = std::max_element(PathFitness.begin(), PathFitness.end());
+    index_big = std::distance(PathFitness.begin(), biggest);
+    if(results.first < PathFitness[index_big]){
+      std::cout<<"current best fitness is :  "<<PathFitness[index_big]<<"  with current generation:  "<< currentGenerationCounter <<std::endl;
+      tempLoop = generation[index_big];
+      tempLoop.push_back(tempLoop[0]);
+      BestPathEachGeneration.push_back(tempLoop);
+      results.first = PathFitness[index_big];
+    }
+     
     
-//     if(que[0] == que[1] or que[0] < 1 or que[1] > path.size() - 3){
-//       continue;
-//     }
-
-//     auto it0 = path.begin() + que[0];
-//     auto it1 = path.begin() + que[1];
-
-//     std::vector<std::string> path1(path.begin(), it0);
-//     std::vector<std::string> path2(it0 + 1, it1);
-//     std::vector<std::string> path3(it1 + 1, path.end());
-
-
-
-//     // std::vector<std::string> path1(path.begin(), path.begin() + que[0]);
-//     // //std::cout<<"---------------path1"<<std::endl;
-//     // std::vector<std::string> path2(path.begin() + que[0], path.begin() + que[1]);
-//     // //std::cout<<"---------------path2"<<std::endl;
-    
-//     // std::vector<std::string> path3;(path.begin() + que[1], path.end());
-//     // //std::cout<<"---------------path3"<<std::endl;
-
     
 
-//     path3.push_back(path1[0]);
+  }
 
-//     std::cout<<"p1, p2, p3 size:: "<<path1.size()<<path2.size()<<path3.size()<<std::endl;
+  std::cout<<"evovle over !"<<std::endl;
+  results.first = 0;
+  results.second = BestPathEachGeneration;
 
-//     std::vector<std::string> newPath1(path1);
-//     std::vector<std::string> newPath2(path1);
-//     newPath1.insert(newPath1.end(), path3.begin(), path3.end());
-//     newPath1.insert(newPath1.end(), path2.begin(), path2.end());
 
+  return results;
+  }
+
+
+
+
+
+std::vector<std::vector<std::string>> TrojanMap::CreateRandomPath(std::vector<std::string> &location_ids, int k){
+  std::vector<std::vector<std::string>> results;
+  std::vector< std::string > temp(location_ids);
+  int i = 0;
+  while(i < k){
     
+    std::pair<int, int> minMax = RandomIndex(location_ids);
+    int min = minMax.first;
+    int max = minMax.second;
 
-//     std::reverse(path2.begin(), path2.end());
+    std::vector< std::string > temp(location_ids);
 
-//     newPath2.insert(newPath2.end(), path3.begin(), path3.end());
-//     newPath2.insert(newPath2.end(), path2.begin(), path2.end());
+    std::reverse(temp.begin() + min, temp.begin() + max);
+
+    results.push_back(temp);
+
+    i += 1;
 
 
-//     if(CalculatePathLength(path) > CalculatePathLength(newPath1) and CalculatePathLength(newPath2) > CalculatePathLength(newPath1)){
-//       minValue = CalculatePathLength(newPath1);
-//       count = 0;
-//       path = newPath1;
-//       results.second.push_back(path);
-//     }
 
-//     else if(CalculatePathLength(path) > CalculatePathLength(newPath2) and CalculatePathLength(newPath1) > CalculatePathLength(newPath2)){
-//       minValue = CalculatePathLength(newPath2);
-//       count = 0;
-//       path = newPath2;
-//       results.second.push_back(path);
-//     }
+  }
+  return results;
+}
 
-//     else{
-//       count += 1;
-//     }
 
-//   }
-//   results.first = minValue;
 
-//   return results;
+double TrojanMap::fitness(std::vector<std::string> path){
+  return 1/CalculatePathLength(path);
+}
 
-// }
+std::vector< double > TrojanMap::CalculateGenerationFitness(std::vector<std::vector<std::string>> generation){
+
+  std::vector< double > res;
+
+  for(auto it : generation){
+
+    it.push_back(it[0]);
+    
+    res.push_back(fitness(it));
+  }
+
+  return res;
+
+}
+
+
+
+void TrojanMap::CrossOver(std::vector<std::string> &A, std::vector<std::string> B){
+
+  std::vector<std::string> res;
+
+  std::pair<int, int> minMax = RandomIndex(A);
+  int min = minMax.first;
+  int max = minMax.second;
+
+  std::vector<std::string> Anew(A);
+  std::vector<std::string> Bnew(B);
+
+  std::vector<std::string> Apart1(A.begin() + min, A.begin() + max + 1);
+  std::vector<std::string> Bpart1(B.begin() + min, B.begin() + max + 1);
+
+  // make the reflect table
+  for(int i = 0; i < A.size(); i++){
+
+
+    if(i >= min and i <= max){
+      //std::cout<<"B"<<i - min<<Bpart1[i - min]<<std::endl;
+      Anew[i] = Bpart1[i - min];
+      Bnew[i] = Apart1[i - min];
+
+    }
+
+    else{
+
+    while (std::find(Bpart1.begin(), Bpart1.end(), Anew[i]) != Bpart1.end()){
+      auto it = std::find(Bpart1.begin(), Bpart1.end(), Anew[i]);
+      Anew[i] = Apart1[std::distance(Bpart1.begin(), it)];
+    }
+
+    while (std::find(Apart1.begin(), Apart1.end(), Bnew[i]) != Apart1.end()){
+      auto it = std::find(Apart1.begin(), Apart1.end(), Bnew[i]);
+      Bnew[i] = Bpart1[std::distance(Apart1.begin(), it)];
+    }
+
+
+
+    }
+
+  }
+
+  A = Anew;
+
+}
+
+
+
+// min max
+std::pair<int, int> TrojanMap::RandomIndex(std::vector<std::string> &location){
+
+
+  while(true){
+    int a = rand()%location.size();
+    int b = rand()%location.size();
+
+    if(a > b){
+      std::pair<int, int> res(b,a);
+      return res;
+    }
+
+    else if(a < b){
+      std::pair<int, int> res(a,b);
+      return res;
+    }
+
+  }
+}
+
+void TrojanMap::Mutation(std::vector<std::string> &path){
+
+  std::pair<int, int> minMax = RandomIndex(path);
+  int min = minMax.first;
+  int max = minMax.second;
+
+  std::reverse(path.begin() + min, path.begin() + max);
+
+}
+
+void TrojanMap::Evolution(std::vector<std::string> &path, std::vector<std::vector<std::string>> &generation, double &pc){
+
+  // toss a coin
+  int toss = rand()%100;
+
+  if(toss/100 < pc){
+
+    //crossover choose a mate
+    CrossOver(path,generation[rand()%generation.size()]);
+
+  }
+
+  else{
+
+    Mutation(path);
+
+  }
+}
 

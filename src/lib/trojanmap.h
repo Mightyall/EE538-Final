@@ -147,20 +147,43 @@ class TrojanMap {
 );
 
 // for circleDetection DFShelper
-  bool DFS_helper(std::string rootID, std::map<std::string, int> &marks,std::string parent);
+  bool DFS_helper(std::string rootID, std::map<std::string, int> &marks, std::string parent, std::vector<std::string> &res);
 
 // for find K points
   void GetAllName(std::vector< std::pair<std::string, std::string> > &nameAndId);
+
+// 2opt
+double reverse_segment_if_better2opt(std::vector<std::string> &path, int i, int k, std::pair<double, std::vector<std::vector<std::string>>> &results);
 
 
 // 3opt
 std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_3opt(
       std::vector<std::string> &location_ids);
 
-double reverse_segment_if_better(std::vector<std::string> &path, int i, int j, int k);
+double reverse_segment_if_better(std::vector<std::string> &path, int i, int j, int k, std::pair<double, std::vector<std::vector<std::string>>> &results);
+
+//GA
+std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_GA(
+       std::vector<std::string> &location_ids);
+
+std::vector<std::vector<std::string>> CreateRandomPath(std::vector<std::string> &location_ids, int k);
+
+double fitness(std::vector<std::string> path);
+
+std::vector< double > CalculateGenerationFitness(std::vector<std::vector<std::string>> generation);
+
+//std::vector<std::vector<std::string>> CrossOver(std::vector<std::string> A, std::vector<std::string> B);
+void CrossOver(std::vector<std::string> &A, std::vector<std::string> B);
+
+std::pair<int, int> RandomIndex(std::vector<std::string> &location);
+
+void Mutation(std::vector<std::string> &path);
+
+void Evolution(std::vector<std::string> &path, std::vector<std::vector<std::string>> &generation, double &pc);
 
 
 
 };
+
 
 #endif
