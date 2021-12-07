@@ -129,10 +129,10 @@ void TrojanMap::PrintMenu() {
     std::string input2;
     getline(std::cin, input2);
     auto start = std::chrono::high_resolution_clock::now();
-    //auto results = CalculateShortestPath_Dijkstra(input1, input2);
+    auto results = CalculateShortestPath_Dijkstra(input1, input2);
 
 
-    auto results = CalculateShortestPath_Bellman_Ford(input1, input2);
+    //auto results = CalculateShortestPath_Bellman_Ford(input1, input2);
 
 
     auto stop = std::chrono::high_resolution_clock::now();

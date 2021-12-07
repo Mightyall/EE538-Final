@@ -64,14 +64,19 @@ Please select 1 - 8:
 ## Step 1: Autocomplete the location name
 
 ### 1.1 Function
+```c++
+std::vector<std::string> TrojanMap::Autocomplete(std::string name);
+```
 
 In this function, we need to autocomplete the words the user searching for. 
 It's just a easy comparision while traverse all the nodes inside the graph. Here what's the main idea of this function is below:
+
 ```shell
 std::string temp = it->second.name.substr(0, name.length());
 ```
 
 ### 1.2 Result
+In this function, we need to make sure that if the input is invalid, the output should also be invalid.
 
 ```shell
 1
@@ -98,25 +103,18 @@ Please input a partial location:66
 **************************************************************
 Time taken by function: 1748 microseconds
 ```
+We can see from the result, each result comes with almost the same time, because the algorithem is traveling all the points, and check the validation of the name. So the runtime Compelexity is O(n).
 
 ## Step 2: Find the place's Coordinates in the Map
 
 ```c++
 std::pair<double, double> GetPosition(std::string name);
 ```
+### 2.1 Function
 
-Given a location name, return the latitude and longitude. There are no duplicated location names. You should mark the given locations on the map. If the location does not exist, return (-1, -1).
+In this function, the main idea is same as before, we travell all the nodes, and compare the name with the input.
 
-Example:
-
-Input: "ChickfilA" \
-Output: (34.0167334, -118.2825307)
-
-Input: "Ralphs" \
-Output: (34.0317653, -118.2908339)
-
-Input: "Target" \
-Output: (34.0257016, -118.2843512)
+### 2.2 Results
 
 ```shell
 2
@@ -133,49 +131,102 @@ Time taken by function: 1215 microseconds
 
 <p align="center"><img src="img/Target.png" alt="Target" width="500"/></p>
 
-## Step 3: CalculateShortestPath between two places
-
-```c++
-std::vector<std::string> CalculateShortestPath_Dijkstra(std::string &location1_name,
-                                               std::string &location2_name);
-std::vector<std::string> CalculateShortestPath_Bellman_Ford(std::string &location1_name,
-                                               std::string &location2_name);
-```
-
-Given 2 locations A and B, find the best route from A to B. The distance between 2 points is the euclidean distance using latitude and longitude. You should use both Dijkstra algorithm and Bellman-Ford algorithm. Compare the time for the different methods. Show the routes on the map. If there is no path, please return empty vector.
-
-Please report and compare the time spent by these 2 algorithms.
-
-Example:
-
-Input: "Ralphs", "ChickfilA" \
-Output: ["2578244375", "5559640911", "6787470571", "6808093910", "6808093913", "6808093919", "6816831441",
-      "6813405269", "6816193784", "6389467806", "6816193783", "123178876", "2613117895", "122719259",
-      "2613117861", "6817230316", "3642819026", "6817230310", "7811699597", "5565967545", "123318572",
-      "6813405206", "6813379482", "544672028", "21306059", "6813379476", "6818390140", "63068610", 
-      "6818390143", "7434941012", "4015423966", "5690152766", "6813379440", "6813379466", "21306060",
-      "6813379469", "6813379427", "123005255", "6807200376", "6807200380", "6813379451", "6813379463",
-      "123327639", "6813379460", "4141790922", "4015423963", "1286136447", "1286136422", "4015423962",
-      "6813379494", "63068643", "6813379496", "123241977", "4015372479", "4015372477", "1732243576",
-      "6813379548", "4015372476", "4015372474", "4015372468", "4015372463", "6819179749", "1732243544",
-      "6813405275", "348121996", "348121864", "6813405280", "1472141024", "6813411590", "216155217", 
-      "6813411589", "1837212103", "1837212101", "6820935911", "4547476733"]
 
 ```shell
-3
+2
 **************************************************************
-* 3. CalculateShortestPath
+* 2. Find the position                                        
 **************************************************************
 
-Please input the start location:Ralphs
-Please input the destination:ChickfilA
+Please input a location:66
+-1-1
 *************************Results******************************
-The distance of the path is:1.53852 miles
+No matched locations.
 **************************************************************
-Time taken by function: 45149 microseconds
+Time taken by function: 838 microseconds
 ```
 
-<p align="center"><img src="img/Routing.png" alt="Routing" width="500"/></p>
+From the result we can also see that the time complexity is O(n).
+
+
+## Step 3: CalculateShortestPath between two places
+## 3.1 Dijkstra.
+```c++
+std::vector<std::string> CalculateShortestPath_Dijkstra(std::string &location1_name, std::string &location2_name);
+```
+First we use dijkstra to caculate the shortest distance. Besides using the distance matrix, we also need a pr matrx to store the father of the node with current min_distancer. So in this way we can keep tracking the path to the current node or the final node. In dijkstra, strating with the start location, we keep updating the 2 matrix untill we reach to the destination.
+```c++
+std::unordered_map<std::string, std::string> pr; // id : father
+```
+
+## 3.2 Bellman_Ford
+```c++
+std::vector<std::string> CalculateShortestPath_Bellman_Ford(std::string &location1_name, std::string &location2_name);
+```
+In Bellman_Ford function, the main idea is to relax all the edges during each iteration, and same like the dijkstra, we need to put the pr matrix to keep tracking the path
+```c++
+for(int i = 0; i < data.size() -1; i++){
+    // repeat data.size() - 1 times
+    // for each node we need to check and relax it
+    //since d[start_id] = 0 is the min value it can reach, so dont need to worry about itea contains the start_id
+    for(auto it_v = data.begin(); it_v != data.end(); it_v++)
+```
+
+## 3.3 Results
+
+1. Ralphs -> ChickfilA
+Please input the start location:Ralphs
+Please input the destination:ChickfilA
+
+Djikstra:
+The distance of the path is:1.53852 miles
+**************************************************************
+Time taken by function: 6640950 microseconds
+<p align="center"><img src="ans/Dji_Ralphs_ChickfilA" alt="Routing" width="500"/></p>
+
+Bellman_Ford:
+The distance of the path is:1.53852 miles
+**************************************************************
+Time taken by function: 25650743 microseconds
+<p align="center"><img src="ans/BF_Ralphs_ChickfilA" alt="Routing" width="500"/></p>
+
+2. Target -> Tap Two Blue
+Please input the start location:Target
+Please input the destination:Tap Two Blue
+
+Djistra:
+The distance of the path is:1.00965 miles
+**************************************************************
+Time taken by function: 6223819 microseconds
+<p align="center"><img src="ans/Dji_Target_Tap" alt="Routing" width="500"/></p>
+
+Bellman_ford:
+The distance of the path is:1.00965 miles
+**************************************************************
+Time taken by function: 25606433 microseconds
+<p align="center"><img src="ans/BF_Target_Tap" alt="Routing" width="500"/></p>
+
+3. Tap Two Blue -> ChickfilA
+Please input the start location:Tap Two Blue
+Please input the destination:ChickfilA
+
+Djikstra:
+The distance of the path is:1.21292 miles
+**************************************************************
+Time taken by function: 5865882 microseconds
+<p align="center"><img src="ans/Dji_Tap_ChickfilA" alt="Routing" width="500"/></p>
+
+Bellman_Ford:
+The distance of the path is:1.21292 miles
+**************************************************************
+Time taken by function: 25471838 microseconds
+<p align="center"><img src="ans/BF_Tap_ChickfilA" alt="Routing" width="500"/></p>
+
+In the results, i didn't put all the result of actual path because it will take a lot of place to do that. Instead, if the two algorithms have the same outcome, then I regard it's the min path. Here I make the chart betweem alorithms
+<p align="center"><img src="ans/Dji_Bell" alt="Routing" width="500"/></p>
+From the hist we can see that djikstra runs faster than bellman_ford. It is because dijkstra doesn't run all of the nodes in the graph. Instead, it jumps out if it reaches to the destination. So the worst run time of Djikstra is O(n + m), where n is the # of nodes, m is the # of edges. However, the run time complexity for bellman_ford is always O(n^2) since it needs to traval all the nodes and relax the edges.
+
+
 
 ## Step 4: The Traveling Trojan Problem (AKA Traveling Salesman!)
 
@@ -406,42 +457,4 @@ Your README file should include two sections:
 2. Detailed description of each function and its time complexity.
 3. Time spent for each function.
 4. Discussion, conclusion, and lessons learned.
-
-### Rubrics:
-
-1. Implementation of auto complete: 5 points.
-2. Implementation of GetPosition: 5 points.
-3. Implementation of shortest path: 15 points.
-   1. Bellman-Ford implementation
-   2. Dijkstra implementation
-   3. Plot two paths, and measure and report time spent by two algorithms.
-4. Implementation of Travelling Trojan: 
-   1. Brute Force: 10 points.
-   2. 2-opt: 10 points.
-   3. Animated plot: 5 points.
-4. Implement of Cycle detection: 10 points.
-   1. Boolean value and draw the cycle if there exists one.
-5. Topological Sort: 10 points.
-   1. Check whether there exist a topological sort or not
-   2. Return the correct order and plot those point on the map
-6. Creating reasonable unit tests: 10 points.
-   1. Three different unit tests for each item.
-7. Find K closest points: 10 points.
-   1. Return the correct ids and draw the points.
-8. Video presentation and report: 10 points.
-
-9. **Extra credit items**: Maximum of 20 points:
-   1. [3-opt](http://cs.indstate.edu/~zeeshan/aman.pdf): 10 points.
-   2. [Genetic algorithm](https://www.geeksforgeeks.org/traveling-salesman-problem-using-genetic-algorithm/) implementation for Travelling Trojan: 10 points
-   3. Create dynamic and animated UI using [ncurses](https://en.wikipedia.org/wiki/Ncurses): 10 points
-      - You could check https://github.com/ourarash/ncurses_bazel
-      - Please develope your own UI.
-      - Example
-      - Accurate measurement of your algorithm runtime using Google Benchmark while sweeping the input size and providing a diagram of how the runtime grows based on the input size.
-<p align="center"><img src="img/ncurses example.gif" alt="example" width="500"/></p>
-   Note: For Ubuntu, you main need to use the following command to prevent errors.
-   
-   ```shell
-   $ bazel run --cxxopt='-std=c++17' src/main:main
-   ```
 
