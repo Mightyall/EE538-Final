@@ -1,8 +1,17 @@
 # Di An's Final Report
 
-## This is a test for the final report
+## Team Member : Di An ( USC ID : 8566513464 )
 
 
+## Content
+
+1.  Autocomplete the location name
+2.  Find the place's Coordinates in the Map
+3.  CalculateShortestPath between two places
+4.  The Traveling Trojan Problem
+5.  Cycle Detection
+6.  Topological Sort
+7.  Find K closest points
 
 ## TrojanMap
 
@@ -33,88 +42,7 @@ class Node {
 
 ```
 
----
 
-## Prerequisites
-
-### OpenCV Installation
-
-For visualization, we use OpenCV library. You will use this library as a black box and don't need to worry about the graphic details.
-
-Use the following commands to install OpenCV.
-
-```shell
-$ cd 2021Fall_TrojanMap
-$ git clone https://github.com/opencv/opencv.git
-```
-
-### Other library Installations
-
-For Ubuntu:
-```shell
-$ sudo apt-get install cmake libgtk2.0-dev pkg-config
-$ sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
-$ sudo apt-get install libncurses5-dev libncursesw5-dev
-$ cp ubuntu/* ./
-```
-
-For MacOS:
-```shell
-$ brew install cmake
-$ brew install ncurses
-```
-
-Next, type the following, but make sure that you set the **path_to_install_folder** to be the absolute path to the install folder under opencv.
-
-```shell
-$ cd opencv/
-$ mkdir build install
-$ cd build
-$ cmake -D CMAKE_INSTALL_PREFIX=/Users/kk9912/Desktop/github/EE538FINAL/final-project-Mightyall/opencv/install\
- -D BUILD_LIST=core,highgui,imgcodecs,imgproc,videoio\
- -D WITH_TBB=ON -D WITH_OPENMP=ON -D WITH_IPP=ON\
- -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF\
- -D WITH_NVCUVID=ON\
- -D WITH_CUDA=ON\
- -D BUILD_DOCS=OFF\
- -D BUILD_PERF_TESTS=OFF\
- -D BUILD_TESTS=OFF\
- -D WITH_CSTRIPES=ON\
- -D WITH_OPENCL=ON ..
-$ make install
-```
-
-For example, if cloned this repo under "/Users/ari/github/TrojanMap", you should type:
-
-```shell
-$ cd opencv/
-$ mkdir build install
-$ cd build
-$ cmake -D CMAKE_INSTALL_PREFIX=/Users/ari/github/TrojanMap/opencv/install\
- -D BUILD_LIST=core,highgui,imgcodecs,imgproc,videoio\
- -D WITH_TBB=ON -D WITH_OPENMP=ON -D WITH_IPP=ON\
- -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=OFF\
- -D WITH_NVCUVID=ON\
- -D WITH_CUDA=ON\
- -D BUILD_DOCS=OFF\
- -D BUILD_PERF_TESTS=OFF\
- -D BUILD_TESTS=OFF\
- -D WITH_CSTRIPES=ON\
- -D WITH_OPENCL=ON ..
-$ make install
-```
-
----
-
-## Run the program
-
-Please run:
-
-```shell
-$ bazel run src/main:main
-```
-
-If everything is correct, this menu will show up.
 
 ```shell
 Torjan Map
@@ -132,36 +60,18 @@ Torjan Map
 Please select 1 - 8:
 ```
 
-## Test the program
-
-We created some tests for you to test your program, please run
-```shell
-$ bazel test tests:trojanmap_test
-```
-
-Please add you test in the [trojanmap_test_student.cc](tests/trojanmap_test_student.cc) and run
-
-```shell
-$ bazel test tests:trojanmap_test_student
-```
-
-## First task is to implement a function for each menu item
 
 ## Step 1: Autocomplete the location name
 
-```c++
-std::vector<std::string> Autocomplete(std::string name);
+### 1.1 Function
+
+In this function, we need to autocomplete the words the user searching for. 
+It's just a easy comparision while traverse all the nodes inside the graph. Here what's the main idea of this function is below:
+```shell
+std::string temp = it->second.name.substr(0, name.length());
 ```
 
-We consider the names of nodes as the locations. Implement a method to type the partial name of the location and return a list of possible locations with partial name as prefix. Please treat uppercase and lower case as the same character.
-
-Example:
-
-Input: "ch" \
-Output: ["ChickfilA", "Chipotle Mexican Grill"]
-
-Input: "ta" \
-Output: ["Target", "Tap Two Blue"]
+### 1.2 Result
 
 ```shell
 1
@@ -175,6 +85,18 @@ ChickfilA
 Chipotle Mexican Grill
 **************************************************************
 Time taken by function: 1904 microseconds
+```
+
+```shell
+**************************************************************
+* 1. Autocomplete                                             
+**************************************************************
+
+Please input a partial location:66
+*************************Results******************************
+
+**************************************************************
+Time taken by function: 1748 microseconds
 ```
 
 ## Step 2: Find the place's Coordinates in the Map
