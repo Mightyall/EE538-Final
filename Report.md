@@ -357,9 +357,9 @@ Here is the part of the results.
 
 <p align="center"><img src="ans/TSP.png" alt="Routing" width="500"/></p>
 
-In the results part. I seperately run 11, 12, 13, 20, 30, 40, 50 points for these algorithms with the same input. But the brute force and backtracking can not handle so much of hte points, so they stop at 13. So for 20 -50 parts, I can't get the best answer, so I just draw the comparision for each method. Frome the results we can see:
+In the results part. I seperately run 11, 12, 13, 20, 30, 40, 50 points for these algorithms with the same input. But the brute force and backtracking can not handle so much of hte points, so they stop at 13. So for 20 -50 parts, I can't get the best answer, so I just draw the comparision for each method. From the results we can see:
 
-#### 1. backtracking really can save time compared with brute force, but still will cost a lot of time
+#### 1. Backtracking really can save time compared with brute force, but still will cost a lot of time
 <p align="center"><img src="ans/brute11.gif" alt="Routing" width="500"/></p>
 <p align="center"><img src="ans/brute12.gif" alt="Routing" width="500"/></p>
 <p align="center"><img src="ans/brute13.gif" alt="Routing" width="500"/></p>
@@ -371,125 +371,79 @@ In the results part. I seperately run 11, 12, 13, 20, 30, 40, 50 points for thes
 #### 3. Genetic Algorithm is really a random algorithm, it depends on a lot of factors, but it's time mainly depends on the max generation number
 <p align="center"><img src="ans/ga_50.gif" alt="Routing" width="500"/></p>
 
+#### 4. Brute force's time is factorian, so even if it can very fast for 10 points, maybe 1 seconds, then for 13 points ,it will take 13 * 12 * 11 * 1 seconds
+
 
 ## Step 5: Cycle Detection
 
+### 5.1 Function
 ```c++
 bool CycleDetection(std::vector<double> &square);
 ```
 
-In this section, we use a square-shaped subgraph of the original graph by using four coordinates stored in ```std::vector<double> square```, which follows the order of left, right, upper, and lower bounds. 
+In this function, we need to detect whether there contains cycle in the given area. \
+First we need to get all the points inside the squre, the way to do this is travel all the nodes in data, and then compare the latitude and longtitude with the given area value.  \
+After we get all the node inside, the only thing we need to do is using DFS to travel all the nodes inside, with the condition if once the current children meet their parents, we regard there is a cycle inside.
 
-Then try to determine if there is a cycle path in the that subgraph. If it does, return true and report that path on the map. Otherwise return false.
-
-Example 1:
-```shell
-Input: square = {-118.299, -118.264, 34.032, 34.011}
-Output: true
+```cpp
+if(DFS_helper(location_ids[i], marks, parent, res) == true){
+        PlotPointsandEdges(res, square);
+        return true;
 ```
-Here we use the whole original graph as our subgraph. 
-<p align="center"><img src="img/cycle1.png" alt="TSP" width="500"/></p>
 
-Example 2:
-```shell
-Input: square = {-118.290919, -118.282911, 34.02235, 34.019675}
-Output: false
+Inside the dfs_helper, we use follows to decide whether the children can meet their parents
+
+```cpp
+if(marks[child] == 0){
+      if(DFS_helper(child, marks, rootID, res) == true){
+        return true;
+      }
+    }
+
+    else{
+      if(child != parent){
+
+        return true;
+
+      }
+
+    }
 ```
-Here we use a square area inside USC campus as our subgraph
-<p align="center"><img src="img/cycle2.png" alt="TSP" width="500"/></p>
+### 5.2 Results
+First we define the square as the whole map, and it must have a cycle, and here is the result:
+<p align="center"><img src="ans/cycle_whole.png" alt="Routing" width="500"/></p>
 
-Note: You could use the function below to visualize the subgraph. 
+And then we can try to find part of the map, the square is [-118.287, -118.260, 34.020, 34.017], and here is the resuls
+<p align="center"><img src="ans/cycle_part.png" alt="Routing" width="500"/></p>
 
-```c++
-/**
- * PlotPoints: Given a vector of location ids draws the points on the map (no path).
- * 
- * @param  {std::vector<std::string>} location_ids : points inside square
- * @param  {std::vector<double>} square : boundary
- */
-void TrojanMap::PlotPointsandEdges(std::vector<std::string> &location_ids, std::vector<double> &square)
-```
-```shell
-5
-**************************************************************
-* 5. Cycle Detection                                          
-**************************************************************
+What's more, if we use the test number square = [-118.290919, -118.282911, 34.02235, 34.019675], the ouptput should be false.
 
-Please input the left bound longitude(between -118.299 and -118.264):-118.299
-Please input the right bound longitude(between -118.299 and -118.264):-118.264
-Please input the upper bound latitude(between 34.011 and 34.032):34.032
-Please input the lower bound latitude(between 34.011 and 34.032):34.011
-*************************Results******************************
-there exists cycle in the subgraph 
-**************************************************************
-Time taken by function: 273734 microseconds
-
-5
-**************************************************************
-* 5. Cycle Detection                                          
-**************************************************************
-
+```cpp
 Please input the left bound longitude(between -118.299 and -118.264):-118.290919
-Please input the right bound longitude(between -118.299 and -118.264):-118.282911
+Please input the right bound longitude(between -118.299 and -118.264):-228.282911
 Please input the upper bound latitude(between 34.011 and 34.032):34.02235
 Please input the lower bound latitude(between 34.011 and 34.032):34.019675
+-118.291-228.28334.022434.0197
 *************************Results******************************
 there exist no cycle in the subgraph 
-**************************************************************
-Time taken by function: 290371 microseconds
 ```
-## Step 6: Topological Sort
+And the time cost for these three are:
+```shell
+Time taken by function: 142552 microseconds
+Time taken by function: 44566 microseconds
+Time taken by function: 1388 microseconds
+```
+It's true because the more nodes inside, the more we need to travel. The complexity of this algorithm is O(n)
 
+
+## Step 6: DeliveringTrojan
+### 6.1 Function
 ```c++
 std::vector<std::string> DeliveringTrojan(std::vector<std::string> &location_names,
                                             std::vector<std::vector<std::string>> &dependencies);
 ```
-
-Tommy Trojan got a part-time job from TrojanEats, for which he needs to pick up and deliver food from local restaurants to various location near the campus. Tommy needs to visit a few different location near the campus with certain order, since there are some constraints. For example, he must first get the food from the restaurant before arriving at the delivery point. 
-
-The TrojanEats app will have some instructions about these constraints. So, Tommy asks you to help him figure out the feasible route!
-
-Here we will give you a vector of location names that Tommy needs to visit, and also some dependencies between those locations.
-
-
-For example, 
-
-```shell
-Input: 
-location_names = {"Cardinal Gardens", "Coffee Bean1", "CVS"}
-dependencies = {{"Cardinal Gardens","Coffee Bean1"}, {"Cardinal Gardens","CVS"}, {"Coffee Bean1","CVS"}}
-```
-
-Here, ```{"Cardinal Gardens","Coffee Bean1"}``` means
-that Tommy must go to `Cardinal Gardens` prior to `Coffee Bean1`.
-
-Your output should be:
-```shell
-Output: Cardinal Gardens -> Coffee Bean1 -> CVS
-```
-Also, we provide ```PlotPointsOrder``` function that can visualize the results on the map. It will plot each location name and also some arrowed lines to demonstrate a feasible route.
-
-If no feasible route exists, you could simply return an empty vector.
-
-Hint:
-- You also need to finish ```ReadLocationsFromCSVFile``` and ```ReadDependenciesFromCSVFile``` functions, so you could read and parse data from you own CSV files. We also give two sample CSV files under ```input``` folder, which could be a reference. 
-- When it asks you filenames, you need to give the absolute path.
-- If you do not have ```ReadLocationsFromCSVFile``` and ```ReadDependenciesFromCSVFile``` functions ready yet, you can just press enter when it asks you filenames. It will call the default locations and dependencies.
-- The locations are actually nodes, and the dependencies could be directed edges. You may want to first construct a DAG and then implement topological sort algorithm to get the route.
-
-```shell
-6
-*************************Results******************************
-Topological Sorting Results:
-Cardinal Gardens
-Coffee Bean1
-CVS
-**************************************************************
-Time taken by function: 43 microseconds
-```
-<p align="center"><img src="img/TopologicalSort.png" alt="TSP" width="500"/></p>
-
-In the user interface, we read the locations and dependencies from `topologicalsort_dependencies.csv` and `topologicalsort_locations.csv` to modify your input there.
+Topological sort in my opiniion is the combination of DFS & BFS. \
+In
 
 ## Step 7: Find K closest points
 
