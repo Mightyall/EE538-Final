@@ -182,13 +182,13 @@ Djikstra:
 The distance of the path is:1.53852 miles
 **************************************************************
 Time taken by function: 6640950 microseconds
-<p align="center"><img src="ans/Dji_Ralphs_ChickfilA" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/Dji_Ralphs_ChickfilA.png" alt="Routing" width="500"/></p>
 
 Bellman_Ford:
 The distance of the path is:1.53852 miles
 **************************************************************
 Time taken by function: 25650743 microseconds
-<p align="center"><img src="ans/BF_Ralphs_ChickfilA" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/BF_Ralphs_ChickfilA.png" alt="Routing" width="500"/></p>
 
 2. Target -> Tap Two Blue
 Please input the start location:Target
@@ -198,13 +198,13 @@ Djistra:
 The distance of the path is:1.00965 miles
 **************************************************************
 Time taken by function: 6223819 microseconds
-<p align="center"><img src="ans/Dji_Target_Tap" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/Dji_Target_Tap.png" alt="Routing" width="500"/></p>
 
 Bellman_ford:
 The distance of the path is:1.00965 miles
 **************************************************************
 Time taken by function: 25606433 microseconds
-<p align="center"><img src="ans/BF_Target_Tap" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/BF_Target_Tap.png" alt="Routing" width="500"/></p>
 
 3. Tap Two Blue -> ChickfilA
 Please input the start location:Tap Two Blue
@@ -214,16 +214,17 @@ Djikstra:
 The distance of the path is:1.21292 miles
 **************************************************************
 Time taken by function: 5865882 microseconds
-<p align="center"><img src="ans/Dji_Tap_ChickfilA" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/Dji_Tap_ChickfilA.png" alt="Routing" width="500"/></p>
 
 Bellman_Ford:
 The distance of the path is:1.21292 miles
 **************************************************************
 Time taken by function: 25471838 microseconds
-<p align="center"><img src="ans/BF_Tap_ChickfilA" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/BF_Tap_ChickfilA.png" alt="Routing" width="500"/></p>
 
 In the results, i didn't put all the result of actual path because it will take a lot of place to do that. Instead, if the two algorithms have the same outcome, then I regard it's the min path. Here I make the chart betweem alorithms
-<p align="center"><img src="ans/Dji_Bell" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/Dji_Bell.png" alt="Routing" width="500"/></p>
+
 From the hist we can see that djikstra runs faster than bellman_ford. It is because dijkstra doesn't run all of the nodes in the graph. Instead, it jumps out if it reaches to the destination. So the worst run time of Djikstra is O(n + m), where n is the # of nodes, m is the # of edges. However, the run time complexity for bellman_ford is always O(n^2) since it needs to traval all the nodes and relax the edges.
 
 
