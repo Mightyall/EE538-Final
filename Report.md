@@ -498,7 +498,7 @@ CVS
 Time taken by function: 67246 microseconds
 
 ```
-<p align="center"><img src="ans/topo_easy" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/topo_easy.png" alt="Routing" width="500"/></p>
 
 Secondly, I enlarge the dependency tree and to test the algothrim.
 ```cpp
@@ -517,7 +517,7 @@ CVS
 **************************************************************
 Time taken by function: 135780 microseconds
 ```
-<p align="center"><img src="ans/topo_com" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/topo_com.png" alt="Routing" width="500"/></p>
 
 What's more, I put the loop inside :{"Cardinal Gardens", "CVS"}, {"CVS", "Cardinal Gardens"}\
 And the results fit that there is no feasible solution for that.
