@@ -251,51 +251,98 @@ From the hist we can see that djikstra runs faster than bellman_ford. It is beca
 
 ## Step 4: The Traveling Trojan Problem (AKA Traveling Salesman!)
 
-In this section, we assume that a complete graph is given to you. That means each node is a neighbor of all other nodes.
-Given a vector of location ids, assume every location can reach all other locations in the vector (i.e. assume that the vector of location ids is a complete graph).
-Find the shortest route that covers all the locations exactly once and goes back to the start point. 
+### 4.1 Brute Force + Back Tracking
+```cpp
+std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojanBrute(
+      std::vector<std::string> &location_ids)
 
-You will need to return the progress to get the shortest route which will then be converted to an animation.  
-
-We will use the following algorithms:
-
-- Backtracking
-```c++
-std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan(
-      std::vector<std::string> &location_ids);
+std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan(
+                                    std::vector<std::string> &location_ids)
 ```
-- [2-opt Heuristic](https://en.wikipedia.org/wiki/2-opt). Also see [this paper](http://cs.indstate.edu/~zeeshan/aman.pdf)
-```c++
-std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_2opt(
-      std::vector<std::string> &location_ids);
+I want to put the brute force and backtracing together, since the code for the are almost the same, with only a slightly different. In the brute force, the core is to find all the permutation of the current location, so the complexty can be exponential, with a little math concept we gan get to know that. And then we can implement the backtracking into the brute force. What we need to add is cutting the branch once the current cost exceeds the current min cost. And in the brute force, how we can find all the permutation is to keep recursive the current node until it reaches to the leaf, then we add the path to the whole path.
+```cpp
+void TrojanMap::TSP_auxBrute(
+  std::string start, std::vector<std::string> &location_ids, std::string cur_node, double cur_cost, std::vector<std::string> &cur_path, std::pair<double, std::vector<std::vector<std::string>>> &results)
+      
+void TrojanMap::TSP_aux(
+  std::string start, std::vector<std::string> &location_ids, std::string cur_node, double cur_cost, std::vector<std::string> &cur_path, std::pair<double, std::vector<std::vector<std::string>>> &results)
 ```
 
-Please report and compare the time spent by these 2 algorithms. 2-opt algorithm may not get the optimal solution. Please show how far your solution is from the optimal solution.
+### 4.2 2-opt
+The principle of the 2-opt is based on the figures below:
+<p align="center"><img src="ans/2opt_pri.png" alt="Routing" width="500"/></p>
 
-Show the routes on the map. For each intermediate solution, create a new plot. Your final video presentation should include the changes to your solution.
+In the 2-opt, each time I reverse part of the path, and to see whether the new path is better than the previous one, if it does, then I addd the current path into the results and update the current best path. I keep doing this until there is no improvement can be made.
+```cpp
+ while(true){
+    double delta = 0;
+    for(auto it: combinations){
+      delta += reverse_segment_if_better2opt(path2, it[0], it[1], results);
+    }
 
-We will randomly select N points in the map and run your program.
+    if(delta >= 0){
+      break;
+    }
+  }
+```
+And this is how I reverse the path
 
-```shell
-4
-**************************************************************
-* 4. Travelling salesman problem                              
-**************************************************************
-
-In this task, we will select N random points on the map and you need to find the path to travel these points and back to the start point.
-
-Please input the number of the places:10
-Calculating ...
-*************************Results******************************
-The distance of the path is:4.70299 miles
-**************************************************************
-You could find your animation at src/lib/output.avi.          
-Time taken by function: 152517394 microseconds
+```cpp
+double d0 = CalculateDistance(a,b) + CalculateDistance(e,f);
+double d1 = CalculateDistance(a,e) + CalculateDistance(b,f);
 ```
 
-<p align="center"><img src="img/TSP.png" alt="TSP" width="500"/></p>
+### 4.3 3-opt
+Similar to 2-opt, this is how the 3-opt works:
+<p align="center"><img src="ans/3opt_pri.png" alt="Routing" width="500"/></p>
 
-<p align="center"><img src="img/output.gif" alt="TSP videos" width="500"/></p>
+In the 3-opt, instead of choosing part of the path, I choose 2 parts of the path, and do the 2-opt seperately, and I keep doing this until there is no improvement can be made. This 2 algotithms' core ideas are all the same.
+```cpp
+while(true){
+    double delta = 0;
+    for(auto it: combinations){
+      delta += reverse_segment_if_better(path2, it[0], it[1], it[2], results);
+    }
+
+    if(delta >= 0){
+      break;
+    }
+  }
+```
+And below is how I reverse the path
+```cpp
+double d0 = CalculateDistance(a,b) + CalculateDistance(c,d) + CalculateDistance(e,f);
+double d1 = CalculateDistance(a,c) + CalculateDistance(b,d) + CalculateDistance(e,f);
+double d2 = CalculateDistance(a,b) + CalculateDistance(c,e) + CalculateDistance(d,f);
+double d3 = CalculateDistance(a,d) + CalculateDistance(e,b) + CalculateDistance(c,f);
+double d4 = CalculateDistance(f,b) + CalculateDistance(c,d) + CalculateDistance(e,a);
+```
+And one thing important, for d3, instead of reverse the path, we need to swap the order of 2 parts of the path.
+No matter it is 2-opt or 3-opt, the path we put inside should be the loop, where "end" == "start", only in this way can we make sure we will not miss anything.
+
+### 4.4 Genetic Algorithm
+This algorithm is very fun. Here is the flow chart:
+<p align="center"><img src="ans/GA_flowchart.png" alt="Routing" width="500"/></p>
+In this algorithm, first we need to generate the first generation. Then we choose the best individuals directly go into the next generation. Then for the rest of the individuals, we let them cross over with each other, and meanwhile, the individual has chance to process the mutation itself. All of this happens randomly. And after the parents make the children, we need to make sure that the DNA in the children should not have the confliction, besides, the number of the next generation's individual should equal to the current generation size. The reason why I choose unconstrained crossover is that I want to enlarge the searching space in each iteration, and making sure the current best goes directly into the next generation can also make sure the fitness of the generation will not decrease.
+```cpp
+std::vector<std::vector<std::string>> TrojanMap::CreateRandomPath(std::vector<std::string> &location_ids, int k)
+double TrojanMap::fitness(std::vector<std::string> path)
+std::vector< double > TrojanMap::CalculateGenerationFitness
+void TrojanMap::CrossOver(std::vector<std::string> &A, std::vector<std::string> B)
+void TrojanMap::Mutation(std::vector<std::string> &path)
+void TrojanMap::Evolution(std::vector<std::string> &path, std::vector<std::vector<std::string>> &generation, double &pc)
+std::pair<int, int> TrojanMap::RandomIndex(std::vector<std::string> &location)
+```
+
+### 4.5 Results
+Here i will split two parts to show the results
+
+    | Algorithm        | 价格    |  数量  |
+    | --------         | -----:   | :----: |
+    |bruteforce              | $1      |   5    |
+    |backtracking              | $1      |   6    |
+    | 草莓        | $1      |   7    |
+
 
 ## Step 5: Cycle Detection
 
