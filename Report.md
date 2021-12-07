@@ -175,51 +175,71 @@ for(int i = 0; i < data.size() -1; i++){
 ## 3.3 Results
 
 1. Ralphs -> ChickfilA
+
+```cpp
 Please input the start location:Ralphs
 Please input the destination:ChickfilA
+```
+
 
 Djikstra:
+```cpp
 The distance of the path is:1.53852 miles
 **************************************************************
 Time taken by function: 6640950 microseconds
+```
 <p align="center"><img src="ans/Dji_Ralphs_ChickfilA.png" alt="Routing" width="500"/></p>
 
 Bellman_Ford:
+```cpp
 The distance of the path is:1.53852 miles
 **************************************************************
 Time taken by function: 25650743 microseconds
+```
 <p align="center"><img src="ans/BF_Ralphs_ChickfilA.png" alt="Routing" width="500"/></p>
 
 2. Target -> Tap Two Blue
 Please input the start location:Target
 Please input the destination:Tap Two Blue
 
+
 Djistra:
+```cpp
 The distance of the path is:1.00965 miles
 **************************************************************
 Time taken by function: 6223819 microseconds
+```
 <p align="center"><img src="ans/Dji_Target_Tap.png" alt="Routing" width="500"/></p>
 
+
 Bellman_ford:
+```cpp
 The distance of the path is:1.00965 miles
 **************************************************************
 Time taken by function: 25606433 microseconds
+```
 <p align="center"><img src="ans/BF_Target_Tap.png" alt="Routing" width="500"/></p>
 
 3. Tap Two Blue -> ChickfilA
+```cpp
 Please input the start location:Tap Two Blue
 Please input the destination:ChickfilA
+```
 
 Djikstra:
+```cpp
 The distance of the path is:1.21292 miles
 **************************************************************
 Time taken by function: 5865882 microseconds
+```
 <p align="center"><img src="ans/Dji_Tap_ChickfilA.png" alt="Routing" width="500"/></p>
 
 Bellman_Ford:
+```cpp
 The distance of the path is:1.21292 miles
 **************************************************************
 Time taken by function: 25471838 microseconds
+```
 <p align="center"><img src="ans/BF_Tap_ChickfilA.png" alt="Routing" width="500"/></p>
 
 In the results, i didn't put all the result of actual path because it will take a lot of place to do that. Instead, if the two algorithms have the same outcome, then I regard it's the min path. Here I make the chart betweem alorithms
