@@ -300,8 +300,7 @@ void TrojanMap::PrintMenu() {
     std::vector<std::string> location_names;
     if (locations_filename == "")
       //location_names = {"Cardinal Gardens", "Coffee Bean1","CVS"};
-      //location_names = {"1", "2", "3", "4", "5"};
-      location_names = {"1", "2", "3"};
+      location_names = {"Cardinal Gardens", "Coffee Bean1","CVS", "Tap Two Blue", "Target", "Ralphs", "ChickfilA"};
     else
       location_names = ReadLocationsFromCSVFile(locations_filename);
 
@@ -309,12 +308,21 @@ void TrojanMap::PrintMenu() {
     std::vector<std::vector<std::string>> dependencies;
     if (dependencies_filename == "")
       //dependencies = {{"Coffee Bean1","Cardinal Gardens"}, {"CVS","Cardinal Gardens"}, {"CVS","Coffee Bean1"}};
-      dependencies = {{"1", "2"}, {"2", "3"}, {"3", "1"}};
+      //dependencies = {{"1", "2"}, {"2", "3"}, {"3", "1"}};
 
       //dependencies = {{"1", "3"}, {"2", "4"}, {"1", "4"},{"2", "5"}};
 
+      dependencies = {{"Cardinal Gardens", "Coffee Bean1"}, {"Cardinal Gardens", "CVS"}, {"Coffee Bean1", "CVS"},  {"Coffee Bean1", "Ralphs"},
+      {"Tap Two Blue", "CVS"}, {"Tap Two Blue", "Target"}, {"Target", "ChickfilA"}, {"ChickfilA", "CVS"}};
+
+      // dependencies = {{"Cardinal Gardens", "Coffee Bean1"}, {"Cardinal Gardens", "CVS"}, {"CVS", "Cardinal Gardens"},  {"Coffee Bean1", "Ralphs"},
+      // {"Tap Two Blue", "CVS"}, {"Tap Two Blue", "Target"}, {"Target", "ChickfilA"}, {"ChickfilA", "CVS"}};
+
+
+
     else
       dependencies = ReadDependenciesFromCSVFile(dependencies_filename);
+      
 
     // std::vector<std::string> location_names = {"Cardinal Gardens", "Coffee Bean1","CVS"};
     // std::vector<std::vector<std::string>> dependencies = {{"Coffee Bean1","Cardinal Gardens"}, {"CVS","Cardinal Gardens"}, {"CVS","Coffee Bean1"}};

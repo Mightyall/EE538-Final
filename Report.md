@@ -443,7 +443,93 @@ std::vector<std::string> DeliveringTrojan(std::vector<std::string> &location_nam
                                             std::vector<std::vector<std::string>> &dependencies);
 ```
 Topological sort in my opiniion is the combination of DFS & BFS. \
-In
+In this one, first we need to write the data from the csv file.
+```cpp
+while(getline(fin, line)){
+
+    std::stringstream s(line);
+
+
+    while(getline(s, word, ','))
+```
+These lines are very important for reading csv files. As we all know, csv file is one kind of excel file, using "," to seperate each column. \
+And after reading all the dependencies and location_names, we can work on our algorithm. \
+Here I given each location with a indegree number. I calculate the indegree number using the dependecies vector. Each time a pointer is pointing to the location name, its indegree wii increase by one.\
+And once we have finish initalizing the indegree counting. What we need to do is keep pushing the location into the results while it's indegree equal to "0", and each time we push the location in, we need to update the indgree for each location. And we keep doing that until the result size reaches to the location name size.
+
+```cpp
+while(result.size() < locations.size()){
+
+    std::cout<<"current count "<<count<<std::endl;
+
+    for(auto it : indegree){
+      if(it.second == 0 and std::find(result.begin(), result.end(), it.first) == result.end()){
+        std::cout<<"current "<<it.first<<"  with indegree "<<count<<"  it pushed in"<<std::endl;
+        result.push_back(it.first);
+
+        //make the current id's neighbor indegree - 1;
+        for(auto i : dependencies){
+          if(i[0] == it.first){
+
+            for(int j = 1; j < i.size(); j++){
+              indegree[i[j]] -= 1;
+            }
+
+          }
+        }
+
+
+      }
+    }
+```
+Besides get the correct order, another thing we need to make sure is that once there is a loop inside, there is no feasible answer for that.\
+How I achieve that is making a counter inside, once I push a location name in, I reset the counter, once the counter exceed the threshold, I believe there is a cycle inside.
+
+### 6.2 Results
+Here I ues the example given from the csv files to prove that it can work in reading the csv file.
+```cpp
+Please input the locations filename:/Users/kk9912/Desktop/github/EE538FINAL/final-project-Mightyall/input/topologicalsort_locations.csv
+Please input the dependencies filename:/Users/kk9912/Desktop/github/EE538FINAL/final-project-Mightyall/input/topologicalsort_dependencies.csv*************************Results******************************
+Topological Sorting Results:
+Cardinal Gardens
+Coffee Bean1
+CVS
+**************************************************************
+Time taken by function: 67246 microseconds
+
+```
+<p align="center"><img src="ans/topo_easy" alt="Routing" width="500"/></p>
+
+Secondly, I enlarge the dependency tree and to test the algothrim.
+```cpp
+location_names = {"Cardinal Gardens", "Coffee Bean1","CVS", "Tap Two Blue", "Target", "Ralphs", "ChickfilA"};
+dependencies = {{"Cardinal Gardens", "Coffee Bean1"}, {"Cardinal Gardens", "CVS"}, {"Coffee Bean1", "CVS"},  {"Coffee Bean1", "Ralphs"},
+      {"Tap Two Blue", "CVS"}, {"Tap Two Blue", "Target"}, {"Target", "ChickfilA"}, {"ChickfilA", "CVS"}};
+      *************************Results******************************
+Topological Sorting Results:
+Cardinal Gardens
+Coffee Bean1
+Ralphs
+Tap Two Blue
+Target
+ChickfilA
+CVS
+**************************************************************
+Time taken by function: 135780 microseconds
+```
+<p align="center"><img src="ans/topo_com" alt="Routing" width="500"/></p>
+
+What's more, I put the loop inside :{"Cardinal Gardens", "CVS"}, {"CVS", "Cardinal Gardens"}\
+And the results fit that there is no feasible solution for that.
+```cpp
+location_names = {"Cardinal Gardens", "Coffee Bean1","CVS", "Tap Two Blue", "Target", "Ralphs", "ChickfilA"};
+dependencies = {{"Cardinal Gardens", "Coffee Bean1"}, {"Cardinal Gardens", "CVS"}, {"CVS", "Cardinal Gardens"},  {"Coffee Bean1", "Ralphs"},
+      {"Tap Two Blue", "CVS"}, {"Tap Two Blue", "Target"}, {"Target", "ChickfilA"}, {"ChickfilA", "CVS"}};
+There is no feasible answer
+*************************Results******************************
+Topological Sorting Results:
+```
+
 
 ## Step 7: Find K closest points
 
