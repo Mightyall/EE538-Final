@@ -337,11 +337,11 @@ std::pair<int, int> TrojanMap::RandomIndex(std::vector<std::string> &location)
 ### 4.5 Results
 Here i will split two parts to show the results
 
-    | Algorithm        | 价格    |  数量  |
-    | --------         | -----:   | :----: |
-    |bruteforce              | $1      |   5    |
-    |backtracking              | $1      |   6    |
-    | 草莓        | $1      |   7    |
+| 水果        | 价格    |  数量  |
+| --------   | -----:   | :----: |
+| 香蕉        | $1      |   5    |
+| 苹果        | $1      |   6    |
+| 草莓        | $1      |   7    |
 
 
 ## Step 5: Cycle Detection
