@@ -12,6 +12,7 @@
 5.  Cycle Detection
 6.  Topological Sort
 7.  Find K closest points
+8.  Learinig Experience
 
 ## TrojanMap
 
@@ -520,7 +521,7 @@ Time taken by function: 135780 microseconds
 <p align="center"><img src="ans/topo_com.png" alt="Routing" width="500"/></p>
 
 What's more, I put the loop inside :{"Cardinal Gardens", "CVS"}, {"CVS", "Cardinal Gardens"}\
-And the results fit that there is no feasible solution for that.
+And the result fits that there is no feasible solution for that.
 ```cpp
 location_names = {"Cardinal Gardens", "Coffee Bean1","CVS", "Tap Two Blue", "Target", "Ralphs", "ChickfilA"};
 dependencies = {{"Cardinal Gardens", "Coffee Bean1"}, {"Cardinal Gardens", "CVS"}, {"CVS", "Cardinal Gardens"},  {"Coffee Bean1", "Ralphs"},
@@ -529,33 +530,51 @@ There is no feasible answer
 *************************Results******************************
 Topological Sorting Results:
 ```
+And each time i push in the node, i need to update the indegree for all of them, so the time complexity is O(n^2).
 
 
 ## Step 7: Find K closest points
-
-Given a location name and a integer k , find the k closest locations with name on the map and return a vector of string ids. 
-
-We will use the following algorithms:
-
-- Backtracking
+### 7.1 Function
+In this function, what we need to achieve is finding the k points nearest to the given location, still we regards all the locations are directly conenected!
 ```c++
 std::vector<std::string> FindKClosestPoints(std::string name, int k);
 ```
+This one is very easy, it's a test of the priority queue's implementation. \
+Fisrt we need to get the name list, still like before, we just travel all the nodes. \
+Then we create a priority queuewith with length k to store the k results. Then one by one we push the location into the results before the queue is full\
+After the queue is full, by the time we need to push an element, we needto compare it with the top of the queue since it's a priority queue, the top is the max.
+```cpp
+else if(ans.size() == k){
+      if(ans.top().first > tempDist){
+        // pop the first ele in queue and push the new result
+        ans.pop();
+        ans.push(temp);
+      }
+    }
+```
 
-Please report and compare the time spent by this algorithm and show the points on the map.
+### 7.2 Result
 
-```shell
-**************************************************************
-* 7. Find K Closest Points                                    
-**************************************************************
-
-7
-**************************************************************
-* 7. Find K Closest Points                                    
-**************************************************************
-
+```cpp
 Please input the locations:Ralphs
-Please input k:5
+Please input k:6
+
+Find K Closest Points Results:
+1 St Agnes Church
+2 Saint Agnes Elementary School
+3 Warning Skate Shop
+4 Menlo AvenueWest Twentyninth Street Historic District
+5 Vermont Elementary School
+6 MC39s Barber Shop
+**************************************************************
+Time taken by function: 6451 microseconds
+```
+<p align="center"><img src="ans/kmin6.png" alt="Routing" width="500"/></p>
+
+```cpp
+Please input the locations:Ralphs
+Please input k:7
+
 *************************Results******************************
 Find K Closest Points Results:
 1 St Agnes Church
@@ -563,34 +582,78 @@ Find K Closest Points Results:
 3 Warning Skate Shop
 4 Menlo AvenueWest Twentyninth Street Historic District
 5 Vermont Elementary School
+6 MC39s Barber Shop
+7 Anna39s Store
+```
+<p align="center"><img src="ans/kmin7.png" alt="Routing" width="500"/></p>
+
+```cpp
+Please input the locations:Ralphs
+Please input k:8
+
+*************************Results******************************
+Find K Closest Points Results:
+1 St Agnes Church
+2 Saint Agnes Elementary School
+3 Warning Skate Shop
+4 Menlo AvenueWest Twentyninth Street Historic District
+5 Vermont Elementary School
+6 MC39s Barber Shop
+7 Anna39s Store
+8 Vermont 38 29th Metro 204 Southbound
 **************************************************************
-Time taken by function: 1975 microseconds
+Time taken by function: 6178 microseconds
+```
+<p align="center"><img src="ans/kmin8.png" alt="Routing" width="500"/></p>
+
+```cpp
+Please input the locations:Ralphs
+Please input k:9
+
+*************************Results******************************
+Find K Closest Points Results:
+1 St Agnes Church
+2 Saint Agnes Elementary School
+3 Warning Skate Shop
+4 Menlo AvenueWest Twentyninth Street Historic District
+5 Vermont Elementary School
+6 MC39s Barber Shop
+7 Anna39s Store
+8 Vermont 38 29th Metro 204 Southbound
+9 Driveway
+**************************************************************
+Time taken by function: 6574 microseconds
+<p align="center"><img src="ans/kmin9.png" alt="Routing" width="500"/></p>
 ```
 
-<p align="center"><img src="img/Kclosest.png" alt="Kclosest" width="500"/></p>
+```cpp
+Please input the locations:Ralphs
+Please input k:10
 
+*************************Results******************************
+Find K Closest Points Results:
+1 St Agnes Church
+2 Saint Agnes Elementary School
+3 Warning Skate Shop
+4 Menlo AvenueWest Twentyninth Street Historic District
+5 Vermont Elementary School
+6 MC39s Barber Shop
+7 Anna39s Store
+8 Vermont 38 29th Metro 204 Southbound
+9 Driveway
+10 Vermont 38 29th Metro 204 Northbound
+**************************************************************
+Time taken by function: 6866 microseconds
+```
+<p align="center"><img src="ans/kmin10.png" alt="Routing" width="500"/></p>
 
-## Reporting Runtime:
-For each menu item, your program should show the time it took to finish each task.
+From the result we can see that each time with the growth of the results, our outcomes's orders are same, which means our results can be rely on.\
+Then what's interesting is that, no matter how long the results are, the time are the same, which also corresponding to the results that we need to travel all the data inside the map, so the run time complexity is O(n).
 
-Please make sure to provide various examples when you report the runtime. For example for topological sort, show an example with few nodes and another example with 10 or more nodes. The idea is to see how your runtime grows as input size grows.
+## Step 8: Learning Experience
 
-## Runtime Comparison
-For shortest path algorithms, you should compare solving the same problem with different algorithms (Dijkstra and Bellman-Ford). Please show the results on at least 10 different examples.
-
-Similarly for TSP problem, please provide various examples that show the runtime comparison. In particular, you should show at what point using the exhaustive search is not practical and compare the same input with the heuristic implementation.
-
-
-## Report and Rubrics:
-
-Your final project should be checked into Github. The README of your project is your report. 
-
-### Report:
-
-Your README file should include two sections:
-
-1. High-level overview of your design (Use diagrams and pictures for your data structures).
-2. Detailed description of each function and its time complexity.
-3. Time spent for each function.
-4. Discussion, conclusion, and lessons learned.
-
+During this semester, what basically I have learnt is how to use CPP to achieve data structrue, e.g tress, heaps. This is a really good class, which fixs a lot about my bad habbit "theory beyond practice". I believe we all can suffer from this, we can think a question to be very easy with the professor's analysing, however when it comes a time for us to do it in practice alone, a lot of of troubles will show up.\
+And at first, it will take me like a whole weekend to finish the homework, which it really killed me, a lot bugs showed up, a lot of errors that happens beyond my expectation. What's more, the horrible thing was that, the code could be comnpailed with no probelm, but the results is horrible, far away from I expected. And with practice and practice, I gradually figure out when each error occurs, I can fix the problem quickly and I can gradually "think like a computer", which means the rate of the unexpected outcome become less and less. I am very proud of it!\
+When the time comes to do the final project, I decided to do it alone to test myself. Each time I finish a function, a great sence of satisfication will show up, which can motivate me to continue. What's amazing thing is that like this ,step by step, I gradually finsh the whole project, even with the bonus one, which I cannot imagine at the begining. What impressed me most is that when I do the genetic algorithm, at first I thought it's very difficult, but like before, I split it into pieces, slowly writing the helper functions one by one to achieve the whole body of the GA. By the time the results show, I couldn't believe I did it without any error! Though it is not perfect, still have the improvement space, I am still proud of myself have done such thing. It's true the converging rate of it is not perfect, but if I still have time, I will dig into that.\
+At last, I really appreciate Mr.Arash for teaching us this lesson, and all this cannot be done without TA's hard work. They build the whole structure for us, which is the most difficult part of the project. I still have a long way to go.\
+Again, I really like this lesson, and I am really glad to know such a great professor and the TA team. I appreciate it a lot
