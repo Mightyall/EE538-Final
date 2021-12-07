@@ -336,8 +336,8 @@ std::pair<int, int> TrojanMap::RandomIndex(std::vector<std::string> &location)
 ```
 
 ### 4.5 Results
-Here i will split two parts to show the results
-11:
+Here is the part of the results.
+11 points:
 | Algorithm        | value    |  time taken  | min value
 | --------         | -----:   | ----:        |  :----: |
 | br               | 5.0079   |   937691     |  5.0079 |
@@ -346,8 +346,30 @@ Here i will split two parts to show the results
 | 3opt             | 5.0079   |   3201       |  5.0079 |
 | GA               | 7.3151   |   1034483    |  5.0079 |
 
-value11 = [5.0079, 5.0079, 5.0079, 5.0079, 7.3151]
-time11 = [937691, 273147, 1133, 3201, 1034483]
+50 points:
+| Algorithm        | value    |  time taken  | min value
+| --------         | -----:   | ----:        |  :----:  |
+| br               | 0        |   0          |  8.95889 |
+| bt               | 0        |   0          |  8.95889 |
+| 2opt             | 9.79278  |   30754      |  8.95889 |
+| 3opt             | 8.95889  |   1193881    |  8.95889 |
+| GA               | 19.8612  |   6499453    |  8.95889 |
+
+<p align="center"><img src="ans/TSP.png" alt="Routing" width="500"/></p>
+
+In the results part. I seperately run 11, 12, 13, 20, 30, 40, 50 points for these algorithms with the same input. But the brute force and backtracking can not handle so much of hte points, so they stop at 13. So for 20 -50 parts, I can't get the best answer, so I just draw the comparision for each method. Frome the results we can see:
+
+#### 1. backtracking really can save time compared with brute force, but still will cost a lot of time
+<p align="center"><img src="ans/brute11.gif" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/brute12.gif" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/brute13.gif" alt="Routing" width="500"/></p>
+
+#### 2. 2opt can work more perfect than 3opt since it cost less time, but 3opt can be more accurate
+<p align="center"><img src="ans/2opt_50.gif" alt="Routing" width="500"/></p>
+<p align="center"><img src="ans/3opt_50.gif" alt="Routing" width="500"/></p>
+
+#### 3. Genetic Algorithm is really a random algorithm, it depends on a lot of factors, but it's time mainly depends on the max generation number
+<p align="center"><img src="ans/ga_50.gif" alt="Routing" width="500"/></p>
 
 
 ## Step 5: Cycle Detection
