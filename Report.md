@@ -623,8 +623,9 @@ Find K Closest Points Results:
 9 Driveway
 **************************************************************
 Time taken by function: 6574 microseconds
-<p align="center"><img src="ans/kmin9.png" alt="Routing" width="500"/></p>
 ```
+<p align="center"><img src="ans/kmin9.png" alt="Routing" width="500"/></p>
+
 
 ```cpp
 Please input the locations:Ralphs
