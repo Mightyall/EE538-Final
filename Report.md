@@ -324,6 +324,7 @@ No matter it is 2-opt or 3-opt, the path we put inside should be the loop, where
 This algorithm is very fun. Here is the flow chart:
 <p align="center"><img src="ans/GA_flowchart.png" alt="Routing" width="500"/></p>
 In this algorithm, first we need to generate the first generation. Then we choose the best individuals directly go into the next generation. Then for the rest of the individuals, we let them cross over with each other, and meanwhile, the individual has chance to process the mutation itself. All of this happens randomly. And after the parents make the children, we need to make sure that the DNA in the children should not have the confliction, besides, the number of the next generation's individual should equal to the current generation size. The reason why I choose unconstrained crossover is that I want to enlarge the searching space in each iteration, and making sure the current best goes directly into the next generation can also make sure the fitness of the generation will not decrease.
+
 ```cpp
 std::vector<std::vector<std::string>> TrojanMap::CreateRandomPath(std::vector<std::string> &location_ids, int k)
 double TrojanMap::fitness(std::vector<std::string> path)
@@ -336,12 +337,17 @@ std::pair<int, int> TrojanMap::RandomIndex(std::vector<std::string> &location)
 
 ### 4.5 Results
 Here i will split two parts to show the results
+11:
+| Algorithm        | value    |  time taken  | min value
+| --------         | -----:   | ----:        |  :----: |
+| br               | 5.0079   |   937691     |  5.0079 |
+| bt               | 5.0079   |   273147     |  5.0079 |
+| 2opt             | 5.0079   |   1133       |  5.0079 |
+| 3opt             | 5.0079   |   3201       |  5.0079 |
+| GA               | 7.3151   |   1034483    |  5.0079 |
 
-| 水果        | 价格    |  数量  |
-| --------   | -----:   | :----: |
-| 香蕉        | $1      |   5    |
-| 苹果        | $1      |   6    |
-| 草莓        | $1      |   7    |
+value11 = [5.0079, 5.0079, 5.0079, 5.0079, 7.3151]
+time11 = [937691, 273147, 1133, 3201, 1034483]
 
 
 ## Step 5: Cycle Detection
