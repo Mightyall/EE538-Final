@@ -249,6 +249,7 @@ Time taken by function: 25471838 microseconds
 In the results, i didn't put all the result of actual path because it will take a lot of place to do that. Instead, if the two algorithms have the same outcome, then I regard it's the min path. Here I make the chart betweem alorithms
 <p align="center"><img src="ans/Dji_Bell.png" alt="Routing" width="500"/></p>
 
+The run time complexity of Dijkstra O(n^2), and for Bellman_ford, it's O(m*n)
 From the hist we can see that djikstra runs faster than bellman_ford. It is because dijkstra doesn't run all of the nodes in the graph. Instead, it jumps out if it reaches to the destination. So the worst run time of Djikstra is O(n + m), where n is the # of nodes, m is the # of edges. However, the run time complexity for bellman_ford is always O(n^2) since it needs to traval all the nodes and relax the edges.
 
 
@@ -360,7 +361,7 @@ Here is the part of the results.
 | GA               | 19.8612  |   6499453    |  8.95889 |
 
 <p align="center"><img src="ans/TSP.png" alt="Routing" width="500"/></p>
-
+The runtime compexity of Bruteforce is O(n!), and the worst case for backtracking is O(n!).
 In the results part. I seperately run 11, 12, 13, 20, 30, 40, 50 points for these algorithms with the same input. But the brute force and backtracking can not handle so much of hte points, so they stop at 13. So for 20 -50 parts, I can't get the best answer, so I just draw the comparision for each method. From the results we can see:
 
 #### 1. Backtracking really can save time compared with brute force, but still will cost a lot of time
