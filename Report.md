@@ -14,6 +14,8 @@
 7.  Find K closest points
 8.  Learinig Experience
 
+### The video link is here --> https://www.youtube.com/watch?v=xrQY6vTtA_o <----
+
 ## TrojanMap
 
 This project focuses on using data structures in C++ and implementing various graph algorithms to build a map application.
@@ -200,9 +202,10 @@ Time taken by function: 25650743 microseconds
 <p align="center"><img src="ans/BF_Ralphs_ChickfilA.png" alt="Routing" width="500"/></p>
 
 2. Target -> Tap Two Blue
+```cpp
 Please input the start location:Target
 Please input the destination:Tap Two Blue
-
+```
 
 Djistra:
 ```cpp
@@ -658,3 +661,5 @@ And at first, it will take me like a whole weekend to finish the homework, which
 When the time comes to do the final project, I decided to do it alone to test myself. Each time I finish a function, a great sence of satisfication will show up, which can motivate me to continue. What's amazing thing is that like this ,step by step, I gradually finsh the whole project, even with the bonus one, which I cannot imagine at the begining. What impressed me most is that when I do the genetic algorithm, at first I thought it's very difficult, but like before, I split it into pieces, slowly writing the helper functions one by one to achieve the whole body of the GA. By the time the results show, I couldn't believe I did it without any error! Though it is not perfect, still have the improvement space, I am still proud of myself have done such thing. It's true the converging rate of it is not perfect, but if I still have time, I will dig into that.\
 At last, I really appreciate Mr.Arash for teaching us this lesson, and all this cannot be done without TA's hard work. They build the whole structure for us, which is the most difficult part of the project. I still have a long way to go.\
 Again, I really like this lesson, and I am really glad to know such a great professor and the TA team. I appreciate it a lot
+
+
